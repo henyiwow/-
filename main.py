@@ -31,5 +31,29 @@ def fetch_news():
 # 分類新聞
 def classify_news(news_list):
     categories = {k: [] for k in CATEGORY_KEYWORDS}
-        for title, link in news:
-        print(title, link)  # 或執行分類等邏輯
+    for title, link in news_list:
+        matched = False
+        for category, keywords in CATEGORY_KEYWORDS.items():
+            if any(kw in title for kw in keywords):
+                categories[category].append(f"▾ {title} ({link})")
+                matched = True
+                break
+        if not matched:
+            categories.setdefault("其他", []).append(f"▾ {title} ({link})")
+    return categories
+
+# 整理訊息內容
+def format_message(categories):
+    today = datetime.now().strftime("%Y/%m/%d")
+    lines = [f"📰【新光金控新聞摘要】{today}\n"]
+    for cat, items in categories.items():
+        if items:
+            lines.append(f"\n📁 {cat}：")
+            lines.extend(items[:3])
+    return "\n".join(lines)
+
+if __name__ == "__main__":
+    news = fetch_news()
+    categories = classify_news(news)
+    message = format_message(categories)
+    send_line_message(message)
