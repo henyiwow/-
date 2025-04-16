@@ -31,4 +31,4 @@ def fetch_news():
 # 分類新聞
 def classify_news(news_list):
     categories = {k: [] for k in CATEGORY_KEYWORDS}
-    for title, link in news
+    for title, link in news:
